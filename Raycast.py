@@ -2,6 +2,9 @@ import pyglet
 from pyglet import shapes
 import math
 
+from shapely.geometry import LineString
+from shapely.geometry import Point
+
 class Raycast():
   def __init__(self, car):
     self.update(car)
@@ -15,8 +18,9 @@ class Raycast():
     line = shapes.Line(
       self.car.x, 
       self.car.y,
-      self.car.x + 1000*c,
-      self.car.y + 1000*s,
+      self.car.x + 300*c,
+      self.car.y + 300*s,
+      color=(0, 255, 0),
       width=0.5,
     )
 
@@ -27,7 +31,7 @@ class Raycast():
     for name, rotation in self.directions.items():
        self.rays.append( self.cast(rotation) )
 
-  def get_y_intersect(self, radians):
+  def get_ray_y_intersect(self, radians):
     m = math.tan(radians)
     try:
       b = self.car.y - ( m * self.car.x )
@@ -37,34 +41,73 @@ class Raycast():
     return m, b
 
   def find_intersection(self, radians):
-    b, d = 1, 0
-    a, c = self.get_y_intersect(radians)
-    try:
-      x = (d - c) / (a - b)
-      y = (a * x) + c
-    except:
-      x, y = 0, 0
-
-    # validar se a intersecção ocoore a frente do carro
+    s = math.sin( radians )
     c = math.cos( radians )
-    l1x1 = self.car.x
-    l1x2 = self.car.x + 1000*c
-    l2x1 = 0
-    l2x2 = 2000
 
-    if ( (x > max( min(l1x1, l1x2), min(l2x1, l2x2) )) and
-         (x < min( max(l1x1, l1x2), max(l2x1, l2x2) )) ):
-       pass
-    else:
-      x, y = 0, 0
+    p = Point(480, 350)
+    b1 = p.buffer(300).boundary
+    b2 = p.buffer(250).boundary
 
-    circle = shapes.Circle(x, y, 7, color=(50, 225, 30))
+    l = LineString([
+      (self.car.x - 3000*c, self.car.y - 3000*s), 
+      (self.car.x + 3000*c, self.car.y + 3000*s)
+    ])
+    i1 = b1.intersection(l)
+    i2 = b2.intersection(l)
+
+    try:
+      (inner_x1, inner_y1) = i2.geoms[1].coords[0]
+    except:
+      inner_x1, inner_y1 = 0, 0
+      
+    try:
+      (inner_x2, inner_y2) = i2.geoms[0].coords[0]
+    except:
+      inner_x2, inner_y2 = 0, 0
+
+    try:
+      (outer_x1, outer_y1) = i1.geoms[1].coords[0]
+    except:
+      outer_x1, outer_y1 = 0, 0
+      
+    try:
+      (outer_x2, outer_y2) = i1.geoms[0].coords[0]
+    except:
+      outer_x2, outer_y2 = 0, 0
+
+    constraint = LineString([
+      (self.car.x, self.car.y), 
+      (self.car.x + 300*c, self.car.y + 300*s)
+    ])
+    
+    test = [
+      (inner_x1, inner_y1),
+      (inner_x2, inner_y2),
+      (outer_x1, outer_y1),
+      (outer_x2, outer_y2)
+    ]
+
+    position = Point(self.car.x, self.car.y)
+    closest = (0, 0)
+    d = math.inf
+
+    for entry in test:
+      point = Point(entry)
+
+      if (constraint.distance(point) < 1e-8):
+        if (position.distance(point) < d):
+          d = position.distance(point)
+          closest = entry
+
+    circle = shapes.Circle(closest[0], closest[1], 7, color=(255, 0, 0))
+    
     return circle
 
   def get_interesections(self):
     self.intersections = []
     for name, radians in self.directions.items():
-      self.intersections.append(self.find_intersection( radians ))
+      intersection = self.find_intersection( radians )
+      self.intersections.append(intersection)
 
   def update(self, car):
     self.car = car
