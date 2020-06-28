@@ -13,7 +13,7 @@ from assets import center_image
 
 img = pyglet.image.load('car.png')
 center_image(img)
-car = Player(img, x=600, y=50)
+car = Player(img, x=480, y=75)
 car.scale = 0.07
 
 raycast = Raycast(car)
@@ -24,8 +24,8 @@ window.push_handlers(car.key_handler)
 @window.event
 def on_draw():
     window.clear()
-    car.draw()
     track.draw()
+    car.draw()
 
     for line in raycast.rays:
         line.draw()
