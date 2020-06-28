@@ -11,6 +11,7 @@ class Player(pyglet.sprite.Sprite):
         self.thrust = 300.0
         self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
+        self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
 
     def update_key_pressed(self, dt):
