@@ -1,6 +1,8 @@
 import math
 import pyglet
 
+from shapely.geometry import Point
+
 from pyglet.window import key
 
 class Player(pyglet.sprite.Sprite):
@@ -35,6 +37,17 @@ class Player(pyglet.sprite.Sprite):
             else:
                 self.velocity = 0
 
+    def is_out_of_bounds(self):
+        center = Point(480, 350)
+        outer = center.buffer(300).boundary
+        inner = center.buffer(250).boundary
+
+        position = Point(self.x, self.y)
+        current = position.buffer(5).boundary
+
+        i = inner.intersects(current) or outer.intersects(current)
+        print(i)
+
     def update(self, dt):
         force_x, force_y = 0.0, 0.0
         self.angle_radians = -math.radians(self.rotation)
@@ -46,3 +59,5 @@ class Player(pyglet.sprite.Sprite):
 
         self.x += force_x * dt
         self.y += force_y * dt
+
+        self.is_out_of_bounds()
