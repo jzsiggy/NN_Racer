@@ -2,7 +2,6 @@ import math
 import pyglet
 
 from pyglet.window import key
-from assets import center_image
 
 class Player(pyglet.sprite.Sprite):
     def __init__(self, *args, **kwargs):
@@ -10,13 +9,14 @@ class Player(pyglet.sprite.Sprite):
         self.key_handler = key.KeyStateHandler()
         self.velocity = 0.0
         self.thrust = 300.0
-        self.rotate_speed = 300.0
+        self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
-        self.angle_radians = math.radians(self.rotation)
+        self.angle_radians = -math.radians(self.rotation)
 
     def update_key_pressed(self, dt):
         if self.key_handler[key.LEFT]:
             self.rotation -= self.rotate_speed * dt
+
         if self.key_handler[key.RIGHT]:
             self.rotation += self.rotate_speed * dt
        
@@ -36,17 +36,12 @@ class Player(pyglet.sprite.Sprite):
 
     def update(self, dt):
         force_x, force_y = 0.0, 0.0
-        self.angle_radians = math.radians(self.rotation)
+        self.angle_radians = -math.radians(self.rotation)
 
         self.update_key_pressed(dt)
 
-        force_x = self.velocity * math.sin(self.angle_radians)
-        force_y = self.velocity * math.cos(self.angle_radians)
+        force_x = self.velocity * math.cos(self.angle_radians)
+        force_y = self.velocity * math.sin(self.angle_radians)
 
         self.x += force_x * dt
         self.y += force_y * dt
-
-img = pyglet.image.load('car.png')
-center_image(img)
-car = Player(img, x=300, y=100)
-car.scale = 0.07
