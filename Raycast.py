@@ -31,15 +31,6 @@ class Raycast():
     for name, rotation in self.directions.items():
        self.rays.append( self.cast(rotation) )
 
-  def get_ray_y_intersect(self, radians):
-    m = math.tan(radians)
-    try:
-      b = self.car.y - ( m * self.car.x )
-    except:
-      b = 0
-
-    return m, b
-
   def find_intersection(self, radians):
     s = math.sin( radians )
     c = math.cos( radians )
