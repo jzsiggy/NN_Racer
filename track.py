@@ -3,4 +3,6 @@ from pyglet import shapes
 
 track = pyglet.graphics.Batch()
 
-line2 = shapes.Line(0, 0, 2000, 2000, width=4, color=(200, 20, 20), batch=track)
+circle = shapes.Circle(480, 350, 300, color=(255, 255, 255), batch=track)
+circle_inner = shapes.Circle(480, 350, 250, color=(0, 0, 0), batch=track)
+
