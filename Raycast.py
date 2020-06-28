@@ -10,6 +10,7 @@ class Raycast():
     self.update(car)
     self.rays = []
     self.intersections = []
+    self.distances = []
   
   def cast(self, rotation):
     s = math.sin( rotation )
@@ -91,14 +92,17 @@ class Raycast():
           closest = entry
 
     circle = shapes.Circle(closest[0], closest[1], 7, color=(255, 0, 0))
+    distance = d
     
-    return circle
+    return circle, distance
 
   def get_interesections(self):
     self.intersections = []
+    self.distances = []
     for name, radians in self.directions.items():
-      intersection = self.find_intersection( radians )
+      intersection, distance = self.find_intersection( radians )
       self.intersections.append(intersection)
+      self.distances.append(distance)
 
   def update(self, car):
     self.car = car

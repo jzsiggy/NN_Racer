@@ -46,7 +46,7 @@ class Player(pyglet.sprite.Sprite):
         current = position.buffer(5).boundary
 
         i = inner.intersects(current) or outer.intersects(current)
-        print(i)
+        return i
 
     def update(self, dt):
         force_x, force_y = 0.0, 0.0
