@@ -5,9 +5,16 @@ from pyglet import shapes
 
 import math
 
-from Player import car
+from Player import Player
 from Raycast import Raycast
 from track import track
+from assets import center_image
+
+
+img = pyglet.image.load('car.png')
+center_image(img)
+car = Player(img, x=600, y=50)
+car.scale = 0.07
 
 raycast = Raycast(car)
 
@@ -22,6 +29,9 @@ def on_draw():
 
     for line in raycast.rays:
         line.draw()
+    
+    for intersection in raycast.intersections:
+        intersection.draw()
 
 def update(dt):
     car.update(dt)
