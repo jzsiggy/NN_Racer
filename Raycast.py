@@ -46,8 +46,17 @@ class Raycast():
       x, y = 0, 0
 
     # validar se a intersecção ocoore a frente do carro
-    
+    c = math.cos( radians )
+    l1x1 = self.car.x
+    l1x2 = self.car.x + 1000*c
+    l2x1 = 0
+    l2x2 = 2000
 
+    if ( (x > max( min(l1x1, l1x2), min(l2x1, l2x2) )) and
+         (x < min( max(l1x1, l1x2), max(l2x1, l2x2) )) ):
+       pass
+    else:
+      x, y = 0, 0
 
     circle = shapes.Circle(x, y, 7, color=(50, 225, 30))
     return circle
