@@ -4,6 +4,7 @@ from pyglet.window import key
 
 from shapely.geometry import Point
 
+from Brain import Brain
 from assets import center_image
 
 class Player(pyglet.sprite.Sprite):
@@ -16,8 +17,15 @@ class Player(pyglet.sprite.Sprite):
         self.keys = dict(left=False, right=False, up=False, down=False)
         self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
+        
+        self.individual = 0
         self.distance_traveled = 0
+        self.longest_distance = 0
+        self.best_network = None
 
+        self.last_ten_ditances = []
+
+        self.brain = Brain()
         self.impulse = [0, 0, 0, 0]
 
         img = pyglet.image.load('bad.png')
@@ -91,9 +99,21 @@ class Player(pyglet.sprite.Sprite):
         i = inner.intersects(current) or outer.intersects(current)
         if i:
             self.image = self.red
+            self.reset()
         else:
             self.image = self.blue
         return i
+
+    def update_last_ten_distances(self):
+        self.last_ten_ditances.append(self.distance_traveled)
+        self.last_ten_ditances = self.last_ten_ditances[-10:]
+
+    def check_inplace(self):
+        if (len(self.last_ten_ditances) >= 10):
+            print( round(self.last_ten_ditances[0]), round(self.last_ten_ditances[9]) )
+            if (round(self.last_ten_ditances[0]) == round(self.last_ten_ditances[9])):
+                self.reset()
+                
 
     def update_distance_traveled(self, dt):
         self.distance_traveled += self.velocity * dt
@@ -109,6 +129,7 @@ class Player(pyglet.sprite.Sprite):
         self.update_key_pressed(dt)
         self.update_impulses(dt)
         self.update_distance_traveled(dt)
+        self.update_last_ten_distances()
 
         force_x = self.velocity * math.cos(self.angle_radians)
         force_y = self.velocity * math.sin(self.angle_radians)
@@ -117,3 +138,21 @@ class Player(pyglet.sprite.Sprite):
         self.y += force_y * dt
 
         self.is_out_of_bounds()
+        self.check_inplace()
+
+    def reset(self):
+        if (self.distance_traveled > self.longest_distance):
+            self.longest_distance = self.distance_traveled
+            self.best_network = self.brain.network
+
+        self.x = 480
+        self.y = 80
+        self.velocity = 0.0
+        self.rotation = 0.0001
+        self.angle_radians = -math.radians(self.rotation)
+        self.distance_traveled = 0
+        self.impulse = [0, 0, 0, 0]
+        self.last_ten_ditances = []
+    
+        self.brain = Brain()
+        self.individual+=1
