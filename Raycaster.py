@@ -1,13 +1,16 @@
 import pyglet
 from pyglet import shapes
+
 import math
 
 from shapely.geometry import LineString
 from shapely.geometry import Point
 
-class Raycast():
-  def __init__(self, car):
-    self.update(car)
+from Player import Player
+
+class Raycaster(Player):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.rays = []
     self.intersections = []
     self.distances = []
@@ -17,10 +20,10 @@ class Raycast():
     c = math.cos( rotation )
 
     line = shapes.Line(
-      self.car.x, 
-      self.car.y,
-      self.car.x + 300*c,
-      self.car.y + 300*s,
+      self.x, 
+      self.y,
+      self.x + 300*c,
+      self.y + 300*s,
       color=(0, 255, 0),
       width=0.5,
     )
@@ -41,8 +44,8 @@ class Raycast():
     b2 = p.buffer(250).boundary
 
     l = LineString([
-      (self.car.x - 3000*c, self.car.y - 3000*s), 
-      (self.car.x + 3000*c, self.car.y + 3000*s)
+      (self.x - 3000*c, self.y - 3000*s), 
+      (self.x + 3000*c, self.y + 3000*s)
     ])
     i1 = b1.intersection(l)
     i2 = b2.intersection(l)
@@ -68,8 +71,8 @@ class Raycast():
       outer_x2, outer_y2 = 0, 0
 
     constraint = LineString([
-      (self.car.x, self.car.y), 
-      (self.car.x + 300*c, self.car.y + 300*s)
+      (self.x, self.y), 
+      (self.x + 300*c, self.y + 300*s)
     ])
     
     test = [
@@ -79,7 +82,7 @@ class Raycast():
       (outer_x2, outer_y2)
     ]
 
-    position = Point(self.car.x, self.car.y)
+    position = Point(self.x, self.y)
     closest = (0, 0)
     d = math.inf
 
@@ -104,14 +107,14 @@ class Raycast():
       self.intersections.append(intersection)
       self.distances.append(distance)
 
-  def update(self, car):
-    self.car = car
+  def update(self, dt):
+    super().update(dt)
     self.directions = {
-      'front' : self.car.angle_radians,
-      'left_diag' : self.car.angle_radians + (math.pi / 4),
-      'right_diag' : self.car.angle_radians - (math.pi / 4),
-      'left' : self.car.angle_radians + (math.pi / 2),
-      'right' : self.car.angle_radians - (math.pi / 2),
+      'front' : self.angle_radians,
+      'left_diag' : self.angle_radians + (math.pi / 4),
+      'right_diag' : self.angle_radians - (math.pi / 4),
+      'left' : self.angle_radians + (math.pi / 2),
+      'right' : self.angle_radians - (math.pi / 2),
     }
     self.cast_rays()
     self.get_interesections()

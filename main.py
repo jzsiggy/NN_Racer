@@ -5,18 +5,14 @@ from pyglet import shapes
 
 import math
 
-from Player import Player
-from Raycast import Raycast
+from Raycaster import Raycaster
 from track import track
 from assets import center_image
 
-
 img = pyglet.image.load('car.png')
 center_image(img)
-car = Player(img, x=480, y=75)
+car = Raycaster(img, x=480, y=75)
 car.scale = 0.07
-
-raycast = Raycast(car)
 
 window = Window(960, 700)
 window.push_handlers(car.key_handler)
@@ -27,15 +23,14 @@ def on_draw():
     track.draw()
     car.draw()
 
-    for line in raycast.rays:
+    for line in car.rays:
         line.draw()
     
-    for intersection in raycast.intersections:
+    for intersection in car.intersections:
         intersection.draw()
 
 def update(dt):
     car.update(dt)
-    raycast.update(car)
 
 if __name__ == '__main__':
     pyglet.clock.schedule_interval(update, 1/120.0)
