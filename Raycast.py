@@ -37,7 +37,7 @@ class Raycast():
     c = math.cos( radians )
 
     p = Point(480, 350)
-    b1 = p.buffer(300).boundary
+    b1 = p.buffer(320).boundary
     b2 = p.buffer(250).boundary
 
     l = LineString([
