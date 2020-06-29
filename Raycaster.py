@@ -7,7 +7,6 @@ import numpy as np
 from shapely.geometry import LineString
 from shapely.geometry import Point
 
-from Brain import Brain
 from Player import Player
 
 class Raycaster(Player):
@@ -16,7 +15,6 @@ class Raycaster(Player):
     self.rays = []
     self.intersections = []
     self.distances = []
-    self.brain = Brain()
   
   def cast(self, rotation):
     s = math.sin( rotation )
@@ -126,5 +124,4 @@ class Raycaster(Player):
     }
     self.cast_rays()
     self.get_interesections()
-    self.get_impulse()
-  
+    self.get_impulse()  
