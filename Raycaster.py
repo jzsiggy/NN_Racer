@@ -2,10 +2,12 @@ import pyglet
 from pyglet import shapes
 
 import math
+import numpy as np
 
 from shapely.geometry import LineString
 from shapely.geometry import Point
 
+from Brain import Brain
 from Player import Player
 
 class Raycaster(Player):
@@ -14,6 +16,7 @@ class Raycaster(Player):
     self.rays = []
     self.intersections = []
     self.distances = []
+    self.brain = Brain()
   
   def cast(self, rotation):
     s = math.sin( rotation )
@@ -84,7 +87,7 @@ class Raycaster(Player):
 
     position = Point(self.x, self.y)
     closest = (0, 0)
-    d = math.inf
+    d = 1000
 
     for entry in test:
       point = Point(entry)
@@ -107,6 +110,11 @@ class Raycaster(Player):
       self.intersections.append(intersection)
       self.distances.append(distance)
 
+  def get_impulse(self):
+    features = [*self.distances, self.velocity]
+    x = np.array(features)
+    super().set_impulse(self.brain.get_impulse(features))
+
   def update(self, dt):
     super().update(dt)
     self.directions = {
@@ -118,4 +126,5 @@ class Raycaster(Player):
     }
     self.cast_rays()
     self.get_interesections()
+    self.get_impulse()
   
