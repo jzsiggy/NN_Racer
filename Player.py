@@ -14,6 +14,7 @@ class Player(pyglet.sprite.Sprite):
         self.keys = dict(left=False, right=False, up=False, down=False)
         self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
+        self.distance_traveled = 0
 
         img = pyglet.image.load('bad.png')
         center_image(img)
@@ -59,11 +60,15 @@ class Player(pyglet.sprite.Sprite):
             self.image = self.blue
         return i
 
+    def update_distance_traveled(self, dt):
+        self.distance_traveled += self.velocity * dt
+
     def update(self, dt):
         force_x, force_y = 0.0, 0.0
         self.angle_radians = -math.radians(self.rotation)
 
         self.update_key_pressed(dt)
+        self.update_distance_traveled(dt)
 
         force_x = self.velocity * math.cos(self.angle_radians)
         force_y = self.velocity * math.sin(self.angle_radians)
