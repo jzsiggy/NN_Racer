@@ -1,9 +1,8 @@
 import math
 import pyglet
-
 from shapely.geometry import Point
-
 from pyglet.window import key
+from assets import center_image
 
 class Player(pyglet.sprite.Sprite):
     def __init__(self, *args, **kwargs):
@@ -15,6 +14,14 @@ class Player(pyglet.sprite.Sprite):
         self.keys = dict(left=False, right=False, up=False, down=False)
         self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
+
+        img = pyglet.image.load('bad.png')
+        center_image(img)
+        self.red = img
+
+        img = pyglet.image.load('car.png')
+        center_image(img)
+        self.blue = img
 
     def update_key_pressed(self, dt):
         if self.key_handler[key.LEFT]:
@@ -39,13 +46,17 @@ class Player(pyglet.sprite.Sprite):
 
     def is_out_of_bounds(self):
         center = Point(480, 350)
-        outer = center.buffer(300).boundary
+        outer = center.buffer(320).boundary
         inner = center.buffer(250).boundary
 
         position = Point(self.x, self.y)
         current = position.buffer(5).boundary
 
         i = inner.intersects(current) or outer.intersects(current)
+        if i:
+            self.image = self.red
+        else:
+            self.image = self.blue
         return i
 
     def update(self, dt):
