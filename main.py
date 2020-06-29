@@ -11,7 +11,7 @@ from assets import center_image
 
 img = pyglet.image.load('car.png')
 center_image(img)
-car = Raycaster(img, x=480, y=75)
+car = Raycaster(img, x=480, y=80)
 car.scale = 0.07
 
 window = Window(960, 700)
