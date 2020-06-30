@@ -2,8 +2,12 @@ from Network import Network
 import numpy as np
 
 class Brain():
-  def __init__(self):
-    self.network = Network([6, 5, 4])
+  def __init__(self, network):
+    if network:
+      self.network = network
+      self.network.tweak()
+    else:
+      self.network = Network([6, 5, 4])
 
   def get_impulse(self, distances):
     dist = np.array(distances).reshape(6, 1)

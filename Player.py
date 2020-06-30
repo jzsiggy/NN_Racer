@@ -12,7 +12,7 @@ class Player(pyglet.sprite.Sprite):
         super().__init__(*args, **kwargs)
         self.key_handler = key.KeyStateHandler()
         self.velocity = 0.0
-        self.thrust = 300.0
+        self.thrust = 3000.0
         self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
         self.rotation = 0.0001
@@ -25,7 +25,7 @@ class Player(pyglet.sprite.Sprite):
 
         self.last_ten_ditances = []
 
-        self.brain = Brain()
+        self.brain = Brain(None)
         self.impulse = [0, 0, 0, 0]
 
         img = pyglet.image.load('bad.png')
@@ -73,7 +73,7 @@ class Player(pyglet.sprite.Sprite):
             self.slow_down(dt)
 
     def update_impulses(self, dt):
-        thresh = 0.4
+        thresh = 0
         if self.impulse[0] > thresh:
             self.turn_left(dt)
 
@@ -110,7 +110,6 @@ class Player(pyglet.sprite.Sprite):
 
     def check_inplace(self):
         if (len(self.last_ten_ditances) >= 10):
-            print( round(self.last_ten_ditances[0]), round(self.last_ten_ditances[9]) )
             if (round(self.last_ten_ditances[0]) == round(self.last_ten_ditances[9])):
                 self.reset()
                 
@@ -144,6 +143,7 @@ class Player(pyglet.sprite.Sprite):
         if (self.distance_traveled > self.longest_distance):
             self.longest_distance = self.distance_traveled
             self.best_network = self.brain.network
+            print('UPDATED BEST')
 
         self.x = 480
         self.y = 80
@@ -154,5 +154,11 @@ class Player(pyglet.sprite.Sprite):
         self.impulse = [0, 0, 0, 0]
         self.last_ten_ditances = []
     
-        self.brain = Brain()
         self.individual+=1
+
+        if (self.individual % 20 == 0):
+            self.brain = Brain(self.best_network)
+            print('NEW GEN')
+        else:
+            self.brain = Brain(None)
+

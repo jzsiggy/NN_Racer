@@ -1,7 +1,7 @@
 """
   Network constructor and feedforward method 'borrowed' from mnielsen
 """
-
+import random
 import numpy as np
 # np.random.seed(0)
 
@@ -23,3 +23,9 @@ class Network(object):
         for b, w in zip(self.biases, self.weights):
             a = relu(np.dot(w, a)+b)
         return a
+
+    def tweak(self):
+        self.weights += [random.uniform(-0.1, 0.1)
+                        for x, y in zip(self.sizes[:-1], self.sizes[1:])]
+
+        self.biases = [random.uniform(-0.1, 0.1) for i in self.sizes[1:]]
