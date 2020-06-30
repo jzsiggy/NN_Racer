@@ -3,7 +3,10 @@ import pyglet
 from pyglet.window import key
 
 from shapely.geometry import Point
+from shapely.geometry import LineString
 
+
+from track_points import inner, outer
 from Brain import Brain
 from assets import center_image
 
@@ -12,21 +15,21 @@ class Player(pyglet.sprite.Sprite):
         super().__init__(*args, **kwargs)
         self.key_handler = key.KeyStateHandler()
         self.velocity = 0.0
-        self.thrust = 3000.0
+        self.thrust = 1000.0
         self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
-        self.rotation = 0.0001
+        self.rotation = 180.0001
         self.angle_radians = -math.radians(self.rotation)
         
+        self.brain = Brain(None)
+        self.impulse = [0, 0, 0, 0]
+
         self.individual = 0
         self.distance_traveled = 0
         self.longest_distance = 0
-        self.best_network = None
+        self.best_network = self.brain.network
 
         self.last_ten_ditances = []
-
-        self.brain = Brain(None)
-        self.impulse = [0, 0, 0, 0]
 
         img = pyglet.image.load('bad.png')
         center_image(img)
@@ -89,20 +92,31 @@ class Player(pyglet.sprite.Sprite):
         #     self.slow_down(dt)
 
     def is_out_of_bounds(self):
-        center = Point(480, 350)
-        outer = center.buffer(320).boundary
-        inner = center.buffer(250).boundary
+        tracklines = []
+        for point1, point2 in zip(outer[:-1], outer[1:]):
+            line = LineString([
+                (point1[0], point1[1]), 
+                (point2[0], point2[1])
+            ])
+            tracklines.append(line)
+
+        for point1, point2 in zip(inner[:-1], inner[1:]):
+            line = LineString([
+                (point1[0], point1[1]), 
+                (point2[0], point2[1])
+            ])
+            tracklines.append(line)
 
         position = Point(self.x, self.y)
         current = position.buffer(5).boundary
 
-        i = inner.intersects(current) or outer.intersects(current)
-        if i:
-            self.image = self.red
-            self.reset()
-        else:
-            self.image = self.blue
-        return i
+        for boundry in tracklines:
+            i = boundry.intersects(current)
+            if i:
+                self.image = self.red
+                self.reset()
+            else:
+                self.image = self.blue
 
     def update_last_ten_distances(self):
         self.last_ten_ditances.append(self.distance_traveled)
@@ -146,9 +160,9 @@ class Player(pyglet.sprite.Sprite):
             print('UPDATED BEST')
 
         self.x = 480
-        self.y = 80
+        self.y = 100
         self.velocity = 0.0
-        self.rotation = 0.0001
+        self.rotation = 180.0001
         self.angle_radians = -math.radians(self.rotation)
         self.distance_traveled = 0
         self.impulse = [0, 0, 0, 0]
@@ -161,4 +175,6 @@ class Player(pyglet.sprite.Sprite):
             print('NEW GEN')
         else:
             self.brain = Brain(None)
+
+        # self.brain = Brain(self.best_network)
 
