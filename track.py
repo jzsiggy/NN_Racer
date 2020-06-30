@@ -1,8 +1,29 @@
 import pyglet
 from pyglet import shapes
 
-track = pyglet.graphics.Batch()
+from track_points import inner, outer
 
-circle = shapes.Circle(480, 350, 320, color=(255, 255, 255), batch=track)
-circle_inner = shapes.Circle(480, 350, 250, color=(0, 0, 0), batch=track)
+tracklines = []
+
+for point1, point2 in zip(outer[:-1], outer[1:]):
+  line = shapes.Line(
+      point1[0], 
+      point1[1],
+      point2[0], 
+      point2[1],
+      color=(255, 255, 255),
+      width=1.5,
+    )
+  tracklines.append(line)
+
+for point1, point2 in zip(inner[:-1], inner[1:]):
+  line = shapes.Line(
+      point1[0], 
+      point1[1],
+      point2[0], 
+      point2[1],
+      color=(255, 255, 255),
+      width=1.5,
+    )
+  tracklines.append(line)
 
