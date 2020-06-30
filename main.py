@@ -6,12 +6,12 @@ from pyglet import shapes
 import math
 
 from Raycaster import Raycaster
-from track import track
+from track import tracklines
 from assets import center_image
 
 img = pyglet.image.load('car.png')
 center_image(img)
-car = Raycaster(img, x=480, y=80)
+car = Raycaster(img, x=480, y=100)
 car.scale = 0.07
 
 window = Window(960, 700)
@@ -20,8 +20,10 @@ window.push_handlers(car.key_handler)
 @window.event
 def on_draw():
     window.clear()
-    track.draw()
     car.draw()
+
+    for line in tracklines:
+        line.draw()
 
     for line in car.rays:
         line.draw()
