@@ -15,10 +15,10 @@ class Player(pyglet.sprite.Sprite):
         super().__init__(*args, **kwargs)
         self.key_handler = key.KeyStateHandler()
         self.velocity = 0.0
-        self.thrust = 1000.0
+        self.thrust = 300.0
         self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
-        self.rotation = 180.0001
+        self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
         
         self.brain = Brain(None)
@@ -27,7 +27,9 @@ class Player(pyglet.sprite.Sprite):
         self.individual = 0
         self.distance_traveled = 0
         self.longest_distance = 0
-        self.best_network = self.brain.network
+
+        self.current_best_network = None
+        self.previous_best_network = None
 
         self.last_ten_ditances = []
 
@@ -48,35 +50,43 @@ class Player(pyglet.sprite.Sprite):
     def brake(self, dt):
         if self.velocity > 0:
             self.velocity -= 3 * self.thrust * dt
+            if (self.velocity < 0):
+                self.velocity = 0
         else:
             self.velocity = 0
     
     def accelerate(self, dt):
-        self.velocity += self.thrust * dt
+        top = 250
+        if self.velocity >= top:
+            self.velocity = top
+        else:
+            self.velocity += self.thrust * dt
 
     def slow_down(self, dt):
         if self.velocity > 0:
-                self.velocity -= self.thrust * dt
+            self.velocity -= self.thrust * dt
         else:
             self.velocity = 0
 
-    def update_key_pressed(self, dt):
-        if self.key_handler[key.LEFT]:
-            self.turn_left(dt)
+    # def update_key_pressed(self, dt):
+    #     if self.key_handler[key.LEFT]:
+    #         self.turn_left(dt)
 
-        if self.key_handler[key.RIGHT]:
-            self.turn_right(dt)
+    #     if self.key_handler[key.RIGHT]:
+    #         self.turn_right(dt)
         
-        if self.key_handler[key.DOWN]:
-            self.brake(dt)
+    #     if self.key_handler[key.DOWN]:
+    #         self.brake(dt)
         
-        if self.key_handler[key.UP]:
-            self.accelerate(dt)
-        else:
-            self.slow_down(dt)
+    #     if self.key_handler[key.UP]:
+    #         self.accelerate(dt)
+    #     else:
+    #         self.slow_down(dt)
 
     def update_impulses(self, dt):
         thresh = 0
+
+        self.accelerate(dt)
         if self.impulse[0] > thresh:
             self.turn_left(dt)
 
@@ -85,11 +95,6 @@ class Player(pyglet.sprite.Sprite):
         
         if self.impulse[2] > thresh:
             self.brake(dt)
-        
-        if self.impulse[3] > thresh:
-            self.accelerate(dt)
-        # else:
-        #     self.slow_down(dt)
 
     def is_out_of_bounds(self):
         tracklines = []
@@ -139,7 +144,7 @@ class Player(pyglet.sprite.Sprite):
         force_x, force_y = 0.0, 0.0
         self.angle_radians = -math.radians(self.rotation)
 
-        self.update_key_pressed(dt)
+        # self.update_key_pressed(dt)
         self.update_impulses(dt)
         self.update_distance_traveled(dt)
         self.update_last_ten_distances()
@@ -156,13 +161,13 @@ class Player(pyglet.sprite.Sprite):
     def reset(self):
         if (self.distance_traveled > self.longest_distance):
             self.longest_distance = self.distance_traveled
-            self.best_network = self.brain.network
+            self.current_best_network = self.brain.network
             print('UPDATED BEST')
 
         self.x = 480
         self.y = 100
         self.velocity = 0.0
-        self.rotation = 180.0001
+        self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
         self.distance_traveled = 0
         self.impulse = [0, 0, 0, 0]
@@ -170,11 +175,19 @@ class Player(pyglet.sprite.Sprite):
     
         self.individual+=1
 
-        if (self.individual % 20 == 0):
-            self.brain = Brain(self.best_network)
-            print('NEW GEN')
+
+        # LEARNING STRATEGY...
+
+        print(self.individual)
+
+        if (self.individual >= 120):
+            if (self.individual % 30 == 0):
+                print('NEW GEN')
+                self.previous_best_network = self.current_best_network
+            self.brain = Brain(self.previous_best_network)
+        
         else:
             self.brain = Brain(None)
 
-        # self.brain = Brain(self.best_network)
+        print(self.brain.network.biases)
 
