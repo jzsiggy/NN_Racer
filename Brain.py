@@ -7,7 +7,7 @@ class Brain():
       self.network = network
       self.network.tweak()
     else:
-      self.network = Network([6, 5, 4])
+      self.network = Network([6, 5, 3])
 
   def get_impulse(self, distances):
     dist = np.array(distances).reshape(6, 1)
