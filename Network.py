@@ -1,9 +1,9 @@
 """
   Network constructor and feedforward method 'borrowed' from mnielsen
 """
+
 import random
 import numpy as np
-# np.random.seed(0)
 
 def sigmoid(z):
     return 1.0/(1.0+np.exp(-z))
@@ -25,7 +25,10 @@ class Network(object):
         return a
 
     def tweak(self):
-        self.weights += [random.uniform(-0.1, 0.1)
+        print('tweaking')
+        d_biases = [np.random.randn(y, 1) * 0.1 for y in self.sizes[1:]]
+        d_weights = [np.random.randn(y, x) * 0.1
                         for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
-        self.biases = [random.uniform(-0.1, 0.1) for i in self.sizes[1:]]
+        self.weights = np.add(self.weights, d_weights)
+        self.biases = np.add(self.biases,d_biases)        
