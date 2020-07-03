@@ -32,11 +32,11 @@ class Player(pyglet.sprite.Sprite):
 
         self.last_ten_ditances = []
 
-        img = pyglet.image.load('bad.png')
+        img = pyglet.image.load('resources/bad.png')
         center_image(img)
         self.red = img
 
-        img = pyglet.image.load('car.png')
+        img = pyglet.image.load('resources/car.png')
         center_image(img)
         self.blue = img
 

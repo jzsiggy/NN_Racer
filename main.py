@@ -9,7 +9,7 @@ from Raycaster import Raycaster
 from track import tracklines
 from assets import center_image
 
-img = pyglet.image.load('car.png')
+img = pyglet.image.load('resources/car.png')
 center_image(img)
 car = Raycaster(img, x=480, y=100)
 car.scale = 0.07
