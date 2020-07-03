@@ -26,9 +26,9 @@ class Network(object):
 
     def tweak(self):
         print('tweaking')
-        d_biases = [np.random.randn(y, 1) * 0.1 for y in self.sizes[1:]]
-        d_weights = [np.random.randn(y, x) * 0.1
+        d_biases = [np.random.randn(y, 1) * 0.2 for y in self.sizes[1:]]
+        d_weights = [np.random.randn(y, x) * 0.2
                         for x, y in zip(self.sizes[:-1], self.sizes[1:])]
 
-        self.weights = np.add(self.weights, d_weights)
-        self.biases = np.add(self.biases,d_biases)        
+        self.weights = np.add(self.weights, d_weights, dtype=object)
+        self.biases = np.add(self.biases,d_biases, dtype=object)        
