@@ -4,7 +4,9 @@ import numpy as np
 class Brain():
   def __init__(self, network):
     if network:
-      self.network = network
+      self.network = Network([8, 3])
+      self.network.weights = network.weights
+      self.network.biases = network.biases
       self.network.tweak()
     else:
       self.network = Network([8, 3])
