@@ -1,7 +1,7 @@
 # Neural Network Racer
 Teaching an AI how to drive using neural networks and genetic algorithms
 
-![](Gif.gif)
+![](./Gif.gif)
 
 # How the AI works
 The car's actions are determined by a Neural Network. The weights and biases of the network are initialized randomly. At each generation of 50 cars, the car that was able to travel the furthest will have it's network saved, and the following generation will be spawned with networks based on the previous best car's network.
