@@ -106,6 +106,8 @@ class Raycaster(Player):
     super().update(dt)
     self.directions = {
       'front' : self.angle_radians,
+      'left_frontal' : self.angle_radians + (math.pi / 8),
+      'right_frontal' : self.angle_radians - (math.pi / 8),
       'left_diag' : self.angle_radians + (math.pi / 4),
       'right_diag' : self.angle_radians - (math.pi / 4),
       'left' : self.angle_radians + (math.pi / 2),
