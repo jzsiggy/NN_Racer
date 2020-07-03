@@ -5,7 +5,6 @@ from pyglet.window import key
 from shapely.geometry import Point
 from shapely.geometry import LineString
 
-
 from track_points import inner, outer
 from Brain import Brain
 from assets import center_image
@@ -28,8 +27,8 @@ class Player(pyglet.sprite.Sprite):
         self.distance_traveled = 0
         self.longest_distance = 0
 
-        self.current_best_network = None
-        self.previous_best_network = None
+        self.current_best_network = self.brain.network
+        self.new_best_network = self.brain.network
 
         self.last_ten_ditances = []
 
@@ -161,8 +160,22 @@ class Player(pyglet.sprite.Sprite):
     def reset(self):
         if (self.distance_traveled > self.longest_distance):
             self.longest_distance = self.distance_traveled
-            self.current_best_network = self.brain.network
+            self.new_best_network = self.brain.network
             print('UPDATED BEST')
+
+        # UPDATE NETWORK...
+
+        print(self.individual)
+
+        if (self.individual >= 120):
+            if (self.individual % 30 == 0):
+                print('NEW GEN')
+                self.current_best_network = self.new_best_network
+            self.brain = Brain(self.current_best_network)
+        else:
+            self.brain = Brain(None)
+
+        # RESET POSITION
 
         self.x = 480
         self.y = 100
@@ -170,24 +183,8 @@ class Player(pyglet.sprite.Sprite):
         self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
         self.distance_traveled = 0
-        self.impulse = [0, 0, 0, 0]
+        self.impulse = [0, 0, 0]
         self.last_ten_ditances = []
     
         self.individual+=1
-
-
-        # LEARNING STRATEGY...
-
-        print(self.individual)
-
-        if (self.individual >= 120):
-            if (self.individual % 30 == 0):
-                print('NEW GEN')
-                self.previous_best_network = self.current_best_network
-            self.brain = Brain(self.previous_best_network)
-        
-        else:
-            self.brain = Brain(None)
-
-        print(self.brain.network.biases)
 
