@@ -67,20 +67,20 @@ class Player(pyglet.sprite.Sprite):
         else:
             self.velocity = 0
 
-    # def update_key_pressed(self, dt):
-    #     if self.key_handler[key.LEFT]:
-    #         self.turn_left(dt)
+    def update_key_pressed(self, dt):
+        if self.key_handler[key.LEFT]:
+            self.turn_left(dt)
 
-    #     if self.key_handler[key.RIGHT]:
-    #         self.turn_right(dt)
+        if self.key_handler[key.RIGHT]:
+            self.turn_right(dt)
         
-    #     if self.key_handler[key.DOWN]:
-    #         self.brake(dt)
+        if self.key_handler[key.DOWN]:
+            self.brake(dt)
         
-    #     if self.key_handler[key.UP]:
-    #         self.accelerate(dt)
-    #     else:
-    #         self.slow_down(dt)
+        if self.key_handler[key.UP]:
+            self.accelerate(dt)
+        else:
+            self.slow_down(dt)
 
     def update_impulses(self, dt):
         thresh = 0
