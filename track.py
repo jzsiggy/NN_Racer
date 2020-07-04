@@ -11,7 +11,7 @@ for point1, point2 in zip(outer[:-1], outer[1:]):
       point1[1],
       point2[0], 
       point2[1],
-      color=(255, 255, 255),
+      color=(0, 0, 255),
       width=1.5,
     )
   tracklines.append(line)
@@ -22,7 +22,7 @@ for point1, point2 in zip(inner[:-1], inner[1:]):
       point1[1],
       point2[0], 
       point2[1],
-      color=(255, 255, 255),
+      color=(0, 0, 255),
       width=1.5,
     )
   tracklines.append(line)

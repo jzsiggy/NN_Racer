@@ -43,7 +43,7 @@ class Raycaster(Player):
       self.y,
       self.x + 300*c,
       self.y + 300*s,
-      color=(0, 255, 0),
+      color=(30, 30, 30),
       width=0.5,
     )
 

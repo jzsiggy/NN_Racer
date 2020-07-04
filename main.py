@@ -15,6 +15,7 @@ car = Raycaster(img, x=480, y=100)
 car.scale = 0.07
 
 window = Window(960, 700)
+pyglet.gl.glClearColor(1,1,1,1)
 window.push_handlers(car.key_handler)
 
 @window.event
