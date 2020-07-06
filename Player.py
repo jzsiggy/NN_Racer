@@ -5,6 +5,8 @@ from pyglet.window import key
 from shapely.geometry import Point
 from shapely.geometry import LineString
 
+import copy
+
 from track_points import inner, outer
 from Brain import Brain
 from assets import center_image
@@ -17,18 +19,35 @@ class Player(pyglet.sprite.Sprite):
         self.thrust = 300.0
         self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
-        self.rotation = 180.0001
+        self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
         
-        self.brain = Brain(None)
+        self.brain = Brain()
         self.impulse = [0, 0, 0, 0]
 
         self.individual = 0
         self.distance_traveled = 0
-        self.longest_distance = 0
+        self.new_best_networks = [
+            {
+                'distance': 0,
+                'network': None
+            },
+            {
+                'distance': 0,
+                'network': None
+            }
+        ]
 
-        self.current_best_network = self.brain.network
-        self.new_best_network = self.brain.network
+        self.current_best_networks = [
+            {
+                'distance': 0,
+                'network': None
+            },
+            {
+                'distance': 0,
+                'network': None
+            }
+        ]
 
         self.last_ten_ditances = []
 
@@ -55,7 +74,7 @@ class Player(pyglet.sprite.Sprite):
             self.velocity = 0
     
     def accelerate(self, dt):
-        top = 400
+        top = 250
         if self.velocity >= top:
             self.velocity = top
         else:
@@ -157,34 +176,49 @@ class Player(pyglet.sprite.Sprite):
         self.is_out_of_bounds()
         self.check_inplace()
 
-    def reset(self):
-        if (self.distance_traveled > self.longest_distance):
-            self.longest_distance = self.distance_traveled
-            self.new_best_network = self.brain.network
+    def check_best(self):
+        current_first = self.current_best_networks[0]
+        current_second = self.current_best_networks[1]
+        new_first = self.new_best_networks[0]
+        new_second = self.new_best_networks[1]
+
+        if (self.distance_traveled > current_first['distance'] and self.distance_traveled > new_first['distance']):
+            self.new_best_networks[0]['distance'] = self.distance_traveled
+            self.new_best_networks[0]['network'] = self.brain.network
             print('UPDATED BEST')
+        elif (self.distance_traveled > current_second['distance'] and self.distance_traveled > new_second['distance']):
+            self.new_best_networks[1]['distance'] = self.distance_traveled
+            self.new_best_networks[1]['network'] = self.brain.network
+            print('UPDATED SECOND BEST')
+    
+    def reset(self):
+        self.check_best()
 
         # UPDATE NETWORK...
 
         print(self.individual)
 
-        if (self.individual >= 120):
-            if (self.individual % 30 == 0):
+        if (self.individual >= 10):
+            if (self.individual % 10 == 0):
                 print('NEW GEN')
-                self.current_best_network = self.new_best_network
-            self.brain = Brain(self.current_best_network)
+                self.current_best_networks = copy.deepcopy(self.new_best_networks)
+
+            best1 = self.current_best_networks[0]['network']
+            best2 = self.current_best_networks[1]['network']
+            self.brain = Brain()
+            self.brain.breed(best1, best2)
         else:
-            self.brain = Brain(None)
+            self.brain = Brain()
 
         # RESET POSITION
 
         self.x = 480
         self.y = 100
         self.velocity = 0.0
-        self.rotation = 180.0001
+        self.rotation = 0.0001
         self.angle_radians = -math.radians(self.rotation)
         self.distance_traveled = 0
         self.impulse = [0, 0, 0]
         self.last_ten_ditances = []
     
         self.individual+=1
-
