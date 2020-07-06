@@ -17,7 +17,7 @@ class Player(pyglet.sprite.Sprite):
         self.thrust = 300.0
         self.rotate_speed = 100.0
         self.keys = dict(left=False, right=False, up=False, down=False)
-        self.rotation = 0.0001
+        self.rotation = 180.0001
         self.angle_radians = -math.radians(self.rotation)
         
         self.brain = Brain(None)
@@ -55,7 +55,7 @@ class Player(pyglet.sprite.Sprite):
             self.velocity = 0
     
     def accelerate(self, dt):
-        top = 250
+        top = 400
         if self.velocity >= top:
             self.velocity = top
         else:
@@ -180,7 +180,7 @@ class Player(pyglet.sprite.Sprite):
         self.x = 480
         self.y = 100
         self.velocity = 0.0
-        self.rotation = 0.0001
+        self.rotation = 180.0001
         self.angle_radians = -math.radians(self.rotation)
         self.distance_traveled = 0
         self.impulse = [0, 0, 0]
